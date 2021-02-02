@@ -39,6 +39,7 @@ jobs:
           heroku_email: "arto.hyvattinen@gmail.com"
           healthcheck: "https://fso-ci-poke.herokuapp.com/health"
           rollbackonhealthcheckfailed: true
+      - uses: actions/checkout@v2
       - name: Bump version and push tag
         uses: anothrNick/github-tag-action@1.33.0
         if: ${{ github.event_name == 'push' }}
@@ -59,4 +60,9 @@ jobs:
       - name: commit messages
         env:
           COMMIT_MESSAGES: ${{ toJson(github.event.commits.*.message) }}
+        run: echo "$COMMIT_MESSAGES"
+      - name: commit messages joined
+        env:
+          COMMIT_MESSAGES: ${{ join(toJson(github.event.commits.*.message)) }}
+        if: ${{ contains(env.COMMIT_MESSAGES,"#skip") == false }}
         run: echo "$COMMIT_MESSAGES"
