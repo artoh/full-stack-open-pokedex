@@ -32,4 +32,5 @@ jobs:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: "fso-ci-poke"
           heroku_email: "arto.hyvattinen@gmail.com"
-          healthcheck: "http://https://fso-ci-poke.herokuapp.com/health"
+          healthcheck: "https://fso-ci-poke.herokuapp.com/health"
+          rollbackonhealthcheckfailed: true
