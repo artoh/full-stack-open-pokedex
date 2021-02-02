@@ -5,8 +5,11 @@ on:
     branches:
       - master
   pull_request:
-    branches: [master]
-    types: [opened, synchonize]
+    branches:
+      - master
+    types: 
+      - opened
+      - synchonize
 
 jobs:
   simple_deployment_pipeline:
