@@ -8,6 +8,6 @@ jobs:
   check_heath_job:
     runs-on: ubuntu-18.04
     steps:
-      - name: Say hello
+      - name: Wget health
         run: |
           wget https://fso-ci-poke.herokuapp.com/health
