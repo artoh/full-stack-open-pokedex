@@ -9,7 +9,7 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  simple_deployment_pipeline:
+  deployment_pipeline:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
@@ -45,8 +45,31 @@ jobs:
         env:
           COMMIT_MESSAGES: ${{ join(toJson(github.event.commits.*.message)) }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: ${{ contains(env.COMMIT_MESSAGES,'#skip') == false && github.event_name == 'push' }}                  
-  a_test_job:
+        if: ${{ contains(env.COMMIT_MESSAGES,'#skip') == false && github.event_name == 'push' }}
+      - name: Success to Slack
+        uses: 8398a7/action-slack@v3
+        if: ${{ success() }}
+        with:
+          status: custom
+          fields: repo, commit, author, took
+          custom_payload: |
+            {
+              attachments:[{
+                color: 'success',
+                text: `a new version deployed to ${process.env.AS_REPO} ($process.env.AS_COMMIT) by ${process.env.AS_AUTHOR} build took ${process.env.AS_TOOK}`
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      - name: Failure to Slack
+        uses: 8398a7/action-slack@v3
+        if: ${{ failure() }}
+        with:
+          status: failure
+          fields: repo, message, commit, author, took
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  test_messages:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
